@@ -10,6 +10,8 @@ import (
 func main() {
 	var cfg config.Config
 
+	// TODO: config reading
+
 	repo := repository.NewMessageRepository()
 	uc := usecase.NewMessageUseCase(repo)
 	server := http.NewServer(uc)
