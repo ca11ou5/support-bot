@@ -5,9 +5,12 @@ import (
 	"github.com/ca11ou5/support-bot/internal/controller/http"
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository"
 	"github.com/ca11ou5/support-bot/internal/domain/message/usecase"
+	"github.com/ca11ou5/support-bot/pkg/logging"
 )
 
 func main() {
+	logging.SetupLogger()
+
 	var cfg config.Config
 
 	// TODO: config reading

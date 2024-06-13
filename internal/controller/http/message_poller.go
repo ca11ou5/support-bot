@@ -8,8 +8,10 @@ import (
 func (s *Server) StartPolling(token string) error {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
+		slog.Error(err.Error())
 		return err
 	}
+
 	s.bot = bot
 
 	// DELETE
@@ -29,7 +31,7 @@ func (s *Server) StartPolling(token string) error {
 		if update.Message != nil {
 			// Command handler
 			if update.Message.IsCommand() {
-				text := s.useCase.HandleCommand(update.Message.Command())
+				text := s.useCase.HandleCommand(update.Message.Command(), update.Message.Chat.ID)
 				s.SendMessage(update.Message.Chat.ID, text)
 				continue
 			}

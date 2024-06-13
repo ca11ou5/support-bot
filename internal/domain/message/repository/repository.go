@@ -17,3 +17,19 @@ func NewMessageRepository() *MessageRepository {
 func (r *MessageRepository) GetCommandAction(command string) *memory.CommandAction {
 	return r.memClient.GetCommandAction(command)
 }
+
+//func (r *MessageRepository) ChangeUserState(userID, action string) {
+//	r.memClient.ChangeUserState(userID, action)
+//}
+
+func (r *MessageRepository) DeleteUserState(chatID string) {
+	r.memClient.DeleteUserState(chatID)
+}
+
+func (r *MessageRepository) ReplaceUserState(chatID string, newState string) {
+	r.memClient.ReplaceUserState(chatID, newState)
+}
+
+func (r *MessageRepository) GetUserState(chatID string) (memory.State, bool) {
+	return r.memClient.GetUserState(chatID)
+}
