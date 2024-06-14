@@ -33,3 +33,7 @@ func (r *MessageRepository) ReplaceUserState(chatID string, newState string) {
 func (r *MessageRepository) GetUserState(chatID string) (memory.State, bool) {
 	return r.memClient.GetUserState(chatID)
 }
+
+func (r *MessageRepository) IncreaseStateStep(chatID string) {
+	r.memClient.IncreaseStateStep(chatID)
+}

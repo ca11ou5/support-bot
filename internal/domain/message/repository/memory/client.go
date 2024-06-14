@@ -16,6 +16,11 @@ var commandPhrases = map[string]CommandAction{
 		Text:            "Вы вели стартовую команду",
 		NeedsSetupState: false,
 	},
+	"login": {
+		Text:            "Введите данные для авторизации в формате:\nTODO: прикрутить Mini Apps",
+		NeedsSetupState: true,
+		State:           "login",
+	},
 }
 
 type Client struct {
@@ -67,4 +72,15 @@ func (c *Client) GetUserState(userID string) (State, bool) {
 	}
 
 	return state.(State), true
+}
+
+func (c *Client) IncreaseStateStep(userID string) {
+	state, _ := c.states.Get(userID)
+
+	newState := State{
+		Name: state.(State).Name,
+		Step: state.(State).Step + 1,
+	}
+
+	c.states.Set(userID, newState, cache.DefaultExpiration)
 }

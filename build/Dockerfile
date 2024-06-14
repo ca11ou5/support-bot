@@ -6,3 +6,10 @@ RUN go mod download
 
 COPY ./ ./
 RUN go build -o ./bin/main ./cmd/main.go
+
+FROM alpine:latest AS runner
+
+COPY --from=builder /usr/local/src/bin/main main
+COPY ./config/envs/dev.env /envs/dev.env
+
+CMD ["/main"]

@@ -36,6 +36,6 @@ func (uc *UseCase) HandleMessage(messageText string, chatID int64) string {
 
 	switch state.Name {
 	case "login":
-		return uc.ServiceLoginState()
+		return uc.ServiceLoginState(messageText, state.Step)
 	}
 }
