@@ -7,6 +7,9 @@ services:
       context: ../
       dockerfile: ./build/Dockerfile
 
+    ports:
+      - "8080:8080"
+
     depends_on:
       postgres:
         condition: service_healthy
@@ -23,4 +26,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
 

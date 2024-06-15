@@ -15,7 +15,8 @@ func (s *Server) StartPolling(token string) error {
 	s.bot = bot
 
 	// DELETE
-	bot.Debug = true
+	//bot.Debug = true
+	bot.Debug = false
 
 	slog.Info("Authorized on account", "username", bot.Self.UserName)
 
@@ -26,6 +27,8 @@ func (s *Server) StartPolling(token string) error {
 	if err != nil {
 		return err
 	}
+
+	go s.HandleStats()
 
 	for update := range updates {
 		go s.statsCounting(update)

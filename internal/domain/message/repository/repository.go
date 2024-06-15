@@ -2,20 +2,23 @@ package repository
 
 import (
 	"github.com/ca11ou5/support-bot/config"
+	"github.com/ca11ou5/support-bot/internal/domain/message/entity"
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository/memory"
+	"github.com/ca11ou5/support-bot/internal/domain/message/repository/mongo"
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository/postgres"
 )
 
 type MessageRepository struct {
-	// MongoClient
-	dbClient  *postgres.Client
-	memClient *memory.Client
+	mongoClient *mongo.Client
+	dbClient    *postgres.Client
+	memClient   *memory.Client
 }
 
 func NewMessageRepository(cfg *config.Config) *MessageRepository {
 	return &MessageRepository{
-		dbClient:  postgres.NewClient(cfg.PostgresURL),
-		memClient: memory.NewClient(),
+		dbClient:    postgres.NewClient(cfg.PostgresURL),
+		memClient:   memory.NewClient(),
+		mongoClient: mongo.NewClient(cfg.MongoURL),
 	}
 }
 
@@ -47,6 +50,10 @@ func (r *MessageRepository) GetSupportEmployee(username, password string) (int, 
 	return r.dbClient.GetSupportEmployee(username, password)
 }
 
-type StatsRepository struct {
-	mongoClient
+func (r *MessageRepository) SaveStats(stats entity.Stats) error {
+	return r.mongoClient.SaveStats(stats)
+}
+
+func (r *MessageRepository) GetStats() []entity.Stats {
+	return r.mongoClient.GetStats()
 }

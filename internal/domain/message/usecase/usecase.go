@@ -7,7 +7,6 @@ import (
 
 type UseCase struct {
 	messageRepo *repository.MessageRepository
-	statsRepo   *repository.StatsRepository
 }
 
 func NewMessageUseCase(messageRepo *repository.MessageRepository) *UseCase {

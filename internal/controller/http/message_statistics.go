@@ -2,36 +2,29 @@ package http
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"sync"
+	"log/slog"
+	"os"
 	"time"
 )
 
-type Stats struct {
-	mu *sync.Mutex
-
-	AllMessagesCount  int
-	AllCommandsCount  int
-	AllCallbacksCount int
-
-	LatestMessagesCount  int
-	LatestCommandsCount  int
-	LatestCallbacksCount int
-}
-
-func (s *Server) HandleStats(update tgbotapi.Update) {
-	ticker := time.NewTicker(time.Minute * 5)
+func (s *Server) HandleStats() {
+	ticker := time.NewTicker(time.Minute * 1)
 
 	go func() {
 		for range ticker.C {
-			//INSERT STATS
+			err := s.useCase.SaveStats(s.stats)
+			if err != nil {
+				slog.Error(err.Error())
+			}
+
 			s.resetLatestStats()
 		}
 	}()
 }
 
 func (s *Server) statsCounting(update tgbotapi.Update) {
-	s.stats.mu.Lock()
-	defer s.stats.mu.Unlock()
+	s.stats.Mu.Lock()
+	defer s.stats.Mu.Unlock()
 
 	s.stats.AllMessagesCount++
 	s.stats.LatestMessagesCount++
@@ -46,14 +39,20 @@ func (s *Server) statsCounting(update tgbotapi.Update) {
 }
 
 func (s *Server) resetLatestStats() {
-	s.stats.mu.Lock()
-	defer s.stats.mu.Unlock()
+	s.stats.Mu.Lock()
+	defer s.stats.Mu.Unlock()
 
 	s.stats.LatestMessagesCount = 0
 	s.stats.LatestCommandsCount = 0
 	s.stats.LatestCallbacksCount = 0
+
+	s.stats.Timestamp = time.Now()
 }
 
 func (s *Server) saveStats() {
-	s.useCase.
+	err := s.useCase.SaveStats(s.stats)
+	if err != nil {
+		slog.Error(err.Error())
+		os.Exit(1)
+	}
 }
