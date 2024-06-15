@@ -17,7 +17,7 @@ func (s *Server) StartPolling(token string) error {
 	// DELETE
 	bot.Debug = true
 
-	slog.Info("Authorized on account %s", bot.Self.UserName)
+	slog.Info("Authorized on account", "username", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -28,6 +28,8 @@ func (s *Server) StartPolling(token string) error {
 	}
 
 	for update := range updates {
+		go s.statsCounting(update)
+
 		if update.Message != nil {
 			// Command handler
 			if update.Message.IsCommand() {
@@ -36,7 +38,9 @@ func (s *Server) StartPolling(token string) error {
 				continue
 			}
 
-			// TODO: Message handler
+			text := s.useCase.HandleMessage(update.Message.Text, update.Message.Chat.ID)
+			s.SendMessage(update.Message.Chat.ID, text)
+			continue
 
 		} else if update.CallbackQuery != nil {
 			// TODO: Callback handler

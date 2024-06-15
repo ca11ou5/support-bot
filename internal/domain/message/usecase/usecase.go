@@ -7,6 +7,7 @@ import (
 
 type UseCase struct {
 	messageRepo *repository.MessageRepository
+	statsRepo   *repository.StatsRepository
 }
 
 func NewMessageUseCase(messageRepo *repository.MessageRepository) *UseCase {
@@ -36,6 +37,8 @@ func (uc *UseCase) HandleMessage(messageText string, chatID int64) string {
 
 	switch state.Name {
 	case "login":
-		return uc.ServiceLoginState(messageText, state.Step)
+		return uc.ServiceLoginState(messageText, state.Step, id)
+	default:
+		return ""
 	}
 }

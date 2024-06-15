@@ -9,7 +9,8 @@ import (
 type Server struct {
 	useCase *usecase.UseCase
 
-	bot *tgbotapi.BotAPI
+	stats *Stats
+	bot   *tgbotapi.BotAPI
 }
 
 func NewServer(useCase *usecase.UseCase) *Server {

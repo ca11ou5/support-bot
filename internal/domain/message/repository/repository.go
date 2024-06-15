@@ -1,15 +1,20 @@
 package repository
 
-import "github.com/ca11ou5/support-bot/internal/domain/message/repository/memory"
+import (
+	"github.com/ca11ou5/support-bot/config"
+	"github.com/ca11ou5/support-bot/internal/domain/message/repository/memory"
+	"github.com/ca11ou5/support-bot/internal/domain/message/repository/postgres"
+)
 
 type MessageRepository struct {
 	// MongoClient
-	// PostgresClient
+	dbClient  *postgres.Client
 	memClient *memory.Client
 }
 
-func NewMessageRepository() *MessageRepository {
+func NewMessageRepository(cfg *config.Config) *MessageRepository {
 	return &MessageRepository{
+		dbClient:  postgres.NewClient(cfg.PostgresURL),
 		memClient: memory.NewClient(),
 	}
 }
@@ -36,4 +41,12 @@ func (r *MessageRepository) GetUserState(chatID string) (memory.State, bool) {
 
 func (r *MessageRepository) IncreaseStateStep(chatID string) {
 	r.memClient.IncreaseStateStep(chatID)
+}
+
+func (r *MessageRepository) GetSupportEmployee(username, password string) (int, error) {
+	return r.dbClient.GetSupportEmployee(username, password)
+}
+
+type StatsRepository struct {
+	mongoClient
 }
