@@ -113,3 +113,13 @@ func (c *Client) FindKeyword(words []string) []QA {
 
 	return qa
 }
+
+// TODO
+func (c *Client) SetKeyword(word string) {
+	kw := Keyword{
+		Word: word,
+		QA:   []QA{},
+	}
+
+	c.keywords.Set(word, kw, cache.DefaultExpiration)
+}

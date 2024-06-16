@@ -57,7 +57,7 @@ const htmlTemplate = `
 		        .chart-container {
 		            width: 300px;
 		            height: 200px;
-		            margin: 20px;
+		            margin: 2f0px;
 		            float: left;
 		        }
 		    </style>

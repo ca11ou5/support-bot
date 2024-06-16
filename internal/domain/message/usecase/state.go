@@ -31,7 +31,11 @@ func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, 
 				Question: "Просмотреть ключевые фразы/теги",
 				// TODO
 				//Answer:   "",
-			}}
+			},
+				{
+					Hash:     "hashForHelpUsers",
+					Question: "Старт диалога с пользователем",
+				}}
 		}
 
 		return "Неправильный логин или пароль", nil
