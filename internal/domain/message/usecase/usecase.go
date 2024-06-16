@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository"
+	"github.com/ca11ou5/support-bot/internal/domain/message/repository/memory"
 	"strconv"
+	"strings"
 )
 
 type UseCase struct {
@@ -26,18 +28,33 @@ func (uc *UseCase) HandleCommand(command string, chatID int64) string {
 	return action.Text
 }
 
-func (uc *UseCase) HandleMessage(messageText string, chatID int64) string {
+func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, []memory.QA) {
 	id := strconv.Itoa(int(chatID))
 
 	state, ok := uc.messageRepo.GetUserState(id)
 	if !ok {
-		// logic with questions or feedback
+		words := strings.Split(messageText, " ")
+
+		qa := uc.messageRepo.FindKeyword(words)
+		if len(qa) != 0 {
+			return "По вашему запросу найдены похожие подсказки:", qa
+		}
+
+		return "По вашему запросу ничего не найдено, связаться со специалистом?", []memory.QA{
+			{
+				Hash:     "hashForConfirm",
+				Question: "Да",
+			}, {
+				Hash:     "hashForDeny",
+				Question: "Нет",
+			},
+		}
 	}
 
 	switch state.Name {
 	case "login":
 		return uc.ServiceLoginState(messageText, state.Step, id)
 	default:
-		return ""
+		return "", nil
 	}
 }

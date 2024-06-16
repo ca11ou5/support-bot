@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/ca11ou5/support-bot/internal/domain/message/repository/memory"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log/slog"
 )
@@ -41,7 +42,12 @@ func (s *Server) StartPolling(token string) error {
 				continue
 			}
 
-			text := s.useCase.HandleMessage(update.Message.Text, update.Message.Chat.ID)
+			text, qas := s.useCase.HandleMessage(update.Message.Text, update.Message.Chat.ID)
+			if qas != nil {
+				s.SendKeyboard(update.Message.Chat.ID, text, qas, update.Message.MessageID)
+				continue
+			}
+
 			s.SendMessage(update.Message.Chat.ID, text)
 			continue
 
@@ -56,6 +62,23 @@ func (s *Server) StartPolling(token string) error {
 
 func (s *Server) SendMessage(chatID int64, message string) {
 	msg := tgbotapi.NewMessage(chatID, message)
+
+	_, err := s.bot.Send(msg)
+	if err != nil {
+		slog.Error(err.Error())
+	}
+}
+
+func (s *Server) SendKeyboard(chatID int64, message string, qas []memory.QA, messageID int) {
+	msg := tgbotapi.NewMessage(chatID, message)
+	var keyboard tgbotapi.InlineKeyboardMarkup
+
+	for _, qa := range qas {
+		keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{tgbotapi.NewInlineKeyboardButtonData(qa.Question, qa.Hash)})
+	}
+
+	msg.ReplyMarkup = keyboard
+	msg.ReplyToMessageID = messageID
 
 	_, err := s.bot.Send(msg)
 	if err != nil {

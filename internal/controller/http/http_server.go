@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/go-echarts/go-echarts/v2/components"
+	"html/template"
 	"net/http"
 )
 
@@ -26,60 +27,63 @@ func (s *Server) chart(w http.ResponseWriter, _ *http.Request) {
 
 	page.Render(w)
 
-	//chartsData := []entity.ChartData{
-	//	{ID: "chart1", Option: chart},
-	//	{ID: "chart2", Option: chart},
-	//}
-	//
-	//// Создание экземпляра PageData
-	//pageData := entity.PageData{
-	//	Charts: chartsData,
-	//}
-	//
-	//tmpl, err := template.New("charts").Parse(htmlTemplate)
-	//if err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-	//
-	//if err := tmpl.Execute(w, pageData); err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
+	data := struct {
+		AssetsHost string
+		Chart1     interface{}
+		Chart2     interface{}
+	}{
+		AssetsHost: page.AssetsHost,
+		Chart1:     chart1,
+		Chart2:     chart2,
+	}
+
+	// Создание шаблона из текста и его исполнение
+	tmpl := template.Must(template.New("index").Parse(htmlTemplate))
+	err := tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 const htmlTemplate = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Multiple Charts</title>
-        <!-- Подключение стилей go-echarts -->
-        <link href="https://cdn.jsdelivr.net/npm/go-echarts@5.1.1/dist/bundle.css" rel="stylesheet">
-        <style>
-            .chart-container {
-                width: 600px;
-                height: 400px;
-                margin: 20px;
-                float: left;
-            }
-        </style>
-    </head>
-    <body>
-        {{range .Charts}}
-        <div class="chart-container">
-            <div id="{{.ID}}" style="width: 100%; height: 100%;"></div>
-        </div>
-        {{end}}
-
-        <!-- Подключение библиотеки go-echarts -->
-        <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/"></script>
-        <script>
-            {{range .Charts}}
-            var {{.ID}} = echarts.init(document.getElementById('{{.ID}}'));
-            {{.Option.JSCode}}
-            {{end}}
-        </script>
-    </body>
-    </html>
-    `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+		    <meta charset="UTF-8">
+		    <title>Charts Demo</title>
+		    <!-- Подключение стилей go-echarts -->
+		    <link rel="stylesheet" href="{{ .AssetsHost }}/echarts.min.css">
+		    <style>
+		        .chart-container {
+		            width: 300px;
+		            height: 200px;
+		            margin: 20px;
+		            float: left;
+		        }
+		    </style>
+		</head>
+		<body>
+		    <!-- Блок для графика 1 -->
+		    <div class="chart-container" height="100" id="chart1"></div>
+		    
+		    <!-- Блок для графика 2 -->
+		    <div class="chart-container" width="300" id="chart2"></div>
+		    
+		    <!-- Подключение библиотеки go-echarts -->
+		    <script src="{{ .AssetsHost }}/echarts.min.js"></script>
+		    <script>
+		        // Инициализация и настройка графиков
+		        var chart1 = echarts.init(document.getElementById('chart1'));
+		        var chart2 = echarts.init(document.getElementById('chart2'));
+		        
+		        // Данные для графиков
+		        var option1 = {{ .Chart1 }};
+		        var option2 = {{ .Chart2 }};
+		        
+		        // Установка опций и отображение графиков
+		        chart1.setOption(option1);
+		        chart2.setOption(option2);
+		    </script>
+		</body>
+		</html>
+		`

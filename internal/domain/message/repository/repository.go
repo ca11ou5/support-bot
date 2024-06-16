@@ -57,3 +57,7 @@ func (r *MessageRepository) SaveStats(stats entity.Stats) error {
 func (r *MessageRepository) GetStats() []entity.Stats {
 	return r.mongoClient.GetStats()
 }
+
+func (r *MessageRepository) FindKeyword(words []string) []memory.QA {
+	return r.memClient.FindKeyword(words)
+}

@@ -26,12 +26,14 @@ var commandPhrases = map[string]CommandAction{
 type Client struct {
 	commandPhrases map[string]CommandAction
 	states         *cache.Cache
+	keywords       *cache.Cache
 }
 
 func NewClient() *Client {
 	return &Client{
 		commandPhrases: commandPhrases,
 		states:         cache.New(7*time.Hour*24, 10*time.Minute),
+		keywords:       cache.New(365*time.Hour*24, 10*time.Minute),
 	}
 }
 
@@ -83,4 +85,31 @@ func (c *Client) IncreaseStateStep(userID string) {
 	}
 
 	c.states.Set(userID, newState, cache.DefaultExpiration)
+}
+
+type Keyword struct {
+	Word string
+	QA   []QA
+}
+
+type QA struct {
+	Hash     string
+	Question string
+	Answer   string
+}
+
+func (c *Client) FindKeyword(words []string) []QA {
+	var qa []QA
+
+	for _, word := range words {
+		v, ok := c.keywords.Get(word)
+		if ok {
+			keyword := v.(Keyword)
+			for _, val := range keyword.QA {
+				qa = append(qa, val)
+			}
+		}
+	}
+
+	return qa
 }

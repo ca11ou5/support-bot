@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
@@ -31,6 +32,13 @@ func (uc *UseCase) GetCharts() (*charts.Line, *charts.Line) {
 
 	allMessages.SetXAxis(xAllMsg).AddSeries("ЛиНиЯ", yAllMsg).SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: false}))
 	latestMessages.SetXAxis(xLatMsg).AddSeries("fgds", yLatMsg)
+
+	allMessages.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{
+			Width:  fmt.Sprintf("%dpx", 400),
+			Height: fmt.Sprintf("%dpx", 200),
+		}),
+	)
 
 	return allMessages, latestMessages
 }

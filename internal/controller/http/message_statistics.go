@@ -29,7 +29,7 @@ func (s *Server) statsCounting(update tgbotapi.Update) {
 	s.stats.AllMessagesCount++
 	s.stats.LatestMessagesCount++
 
-	if update.Message.IsCommand() {
+	if update.Message != nil && update.Message.IsCommand() {
 		s.stats.AllCommandsCount++
 		s.stats.LatestCommandsCount++
 	} else if update.CallbackQuery != nil {
