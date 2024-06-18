@@ -58,3 +58,12 @@ func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, []me
 		return "", nil
 	}
 }
+
+func (uc *UseCase) HandleCallback(callbackData string, chatID int64) CallbackAnswer {
+	switch callbackData {
+	case "hashForSeeKeyword":
+		return uc.HandleSeeKeyword()
+	default:
+		return CallbackAnswer{}
+	}
+}

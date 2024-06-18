@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository/memory"
+	"github.com/ca11ou5/support-bot/internal/domain/message/usecase"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log/slog"
 )
@@ -52,8 +53,9 @@ func (s *Server) StartPolling(token string) error {
 			continue
 
 		} else if update.CallbackQuery != nil {
-			// TODO: Callback handler
-
+			ca := s.useCase.HandleCallback(update.CallbackQuery.Data, update.CallbackQuery.Message.Chat.ID)
+			s.SendCA(ca, update.CallbackQuery.Message.Chat.ID)
+			continue
 		}
 	}
 
@@ -79,6 +81,19 @@ func (s *Server) SendKeyboard(chatID int64, message string, qas []memory.QA, mes
 
 	msg.ReplyMarkup = keyboard
 	msg.ReplyToMessageID = messageID
+
+	_, err := s.bot.Send(msg)
+	if err != nil {
+		slog.Error(err.Error())
+	}
+}
+
+func (s *Server) SendCA(ca usecase.CallbackAnswer, chatID int64) {
+	msg := tgbotapi.NewMessage(chatID, ca.Text)
+
+	if len(ca.MessageKeyboard.InlineKeyboard) != 0 {
+		msg.ReplyMarkup = ca.MessageKeyboard
+	}
 
 	_, err := s.bot.Send(msg)
 	if err != nil {

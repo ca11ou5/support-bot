@@ -6,6 +6,7 @@ import (
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository/memory"
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository/mongo"
 	"github.com/ca11ou5/support-bot/internal/domain/message/repository/postgres"
+	"github.com/patrickmn/go-cache"
 )
 
 type MessageRepository struct {
@@ -60,4 +61,8 @@ func (r *MessageRepository) GetStats() []entity.Stats {
 
 func (r *MessageRepository) FindKeyword(words []string) []memory.QA {
 	return r.memClient.FindKeyword(words)
+}
+
+func (r *MessageRepository) GetKeywords() map[string]cache.Item {
+	return r.memClient.GetKeywords()
 }

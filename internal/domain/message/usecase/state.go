@@ -27,7 +27,7 @@ func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, 
 		if isExist {
 			uc.messageRepo.IncreaseStateStep(id)
 			return "Вы успешно авторизованы", []memory.QA{{
-				Hash:     "hashForCreateKeyword",
+				Hash:     "hashForSeeKeyword",
 				Question: "Просмотреть ключевые фразы/теги",
 				// TODO
 				//Answer:   "",

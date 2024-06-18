@@ -123,3 +123,7 @@ func (c *Client) SetKeyword(word string) {
 
 	c.keywords.Set(word, kw, cache.DefaultExpiration)
 }
+
+func (c *Client) GetKeywords() map[string]cache.Item {
+	return c.keywords.Items()
+}
