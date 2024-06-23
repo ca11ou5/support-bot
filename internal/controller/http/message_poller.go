@@ -5,6 +5,7 @@ import (
 	"github.com/ca11ou5/support-bot/internal/domain/message/usecase"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log/slog"
+	"strconv"
 )
 
 func (s *Server) StartPolling(token string) error {
@@ -39,21 +40,34 @@ func (s *Server) StartPolling(token string) error {
 			// Command handler
 			if update.Message.IsCommand() {
 				text := s.useCase.HandleCommand(update.Message.Command(), update.Message.Chat.ID)
-				s.SendMessage(update.Message.Chat.ID, text)
+				s.SendMessage(update.Message.Chat.ID, text, false)
 				continue
 			}
 
-			text, qas := s.useCase.HandleMessage(update.Message.Text, update.Message.Chat.ID)
+			text, id, qas := s.useCase.HandleMessage(update.Message.Text, update.Message.Chat.ID)
+			if id != "" {
+				ids, _ := strconv.Atoi(id)
+
+				if text == "Диалог закончен" {
+					s.SendMessage(int64(ids), text, true)
+					s.SendMessage(update.Message.Chat.ID, text, true)
+					continue
+				}
+
+				s.SendMessage(int64(ids), text, false)
+				continue
+			}
+
 			if qas != nil {
 				s.SendKeyboard(update.Message.Chat.ID, text, qas, update.Message.MessageID)
 				continue
 			}
 
-			s.SendMessage(update.Message.Chat.ID, text)
+			s.SendMessage(update.Message.Chat.ID, text, false)
 			continue
 
 		} else if update.CallbackQuery != nil {
-			ca := s.useCase.HandleCallback(update.CallbackQuery.Data, update.CallbackQuery.Message.Chat.ID)
+			ca := s.useCase.HandleCallback(update.CallbackQuery.Data, update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Message.ReplyToMessage.Text)
 			s.SendCA(ca, update.CallbackQuery.Message.Chat.ID)
 			continue
 		}
@@ -62,8 +76,11 @@ func (s *Server) StartPolling(token string) error {
 	return nil
 }
 
-func (s *Server) SendMessage(chatID int64, message string) {
+func (s *Server) SendMessage(chatID int64, message string, needCloseKB bool) {
 	msg := tgbotapi.NewMessage(chatID, message)
+	if needCloseKB {
+		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+	}
 
 	_, err := s.bot.Send(msg)
 	if err != nil {
@@ -93,6 +110,15 @@ func (s *Server) SendCA(ca usecase.CallbackAnswer, chatID int64) {
 
 	if len(ca.MessageKeyboard.InlineKeyboard) != 0 {
 		msg.ReplyMarkup = ca.MessageKeyboard
+	}
+
+	if ca.OpponentID != "" {
+		opID, _ := strconv.Atoi(ca.OpponentID)
+		secMsg := tgbotapi.NewMessage(int64(opID), ca.MessageToOpponent)
+
+		msg.ReplyMarkup = ca.KB
+		secMsg.ReplyMarkup = ca.KB
+		s.bot.Send(secMsg)
 	}
 
 	_, err := s.bot.Send(msg)

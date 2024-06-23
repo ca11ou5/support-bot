@@ -6,8 +6,11 @@ import (
 )
 
 type CallbackAnswer struct {
-	Text            string
-	MessageKeyboard tgbotapi.InlineKeyboardMarkup
+	Text              string
+	MessageKeyboard   tgbotapi.InlineKeyboardMarkup
+	OpponentID        string
+	MessageToOpponent string
+	KB                tgbotapi.ReplyKeyboardMarkup
 }
 
 func (uc *UseCase) HandleSeeKeyword() CallbackAnswer {
@@ -34,4 +37,33 @@ func generateCallbackKeyboard(keywords map[string]cache.Item) tgbotapi.InlineKey
 	}
 
 	return keyboard
+}
+
+func (uc *UseCase) HandleConfirm(id string, messageText string) CallbackAnswer {
+	uc.messageRepo.AddUserToWaitChat(id, messageText)
+
+	return CallbackAnswer{
+		Text: "Ваш вопрос отправлен специалисту, ожидайте ответа",
+	}
+}
+
+func (uc *UseCase) HandleHelpUsers(id string) CallbackAnswer {
+	userID, messageText := uc.messageRepo.GetUserFromWaitList()
+	if userID == "" {
+		return CallbackAnswer{Text: "В данный момент никаких вопросов нет, хорошая работа! =)"}
+	}
+
+	uc.messageRepo.ReplaceUserState(id, "chat")
+	uc.messageRepo.ReplaceUserState(userID, "chat")
+
+	uc.messageRepo.SetupChat(userID, id)
+	return CallbackAnswer{
+		Text:              "Постарайтесь дать наиболее развернутый ответ пользователю\n\nВопрос пользователя:\n" + messageText,
+		OpponentID:        userID,
+		MessageToOpponent: "На связи специалист Александр",
+		KB: tgbotapi.NewReplyKeyboard(
+			tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton("Закончить диалог"),
+			)),
+	}
 }

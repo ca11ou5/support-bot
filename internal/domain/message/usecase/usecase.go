@@ -28,8 +28,14 @@ func (uc *UseCase) HandleCommand(command string, chatID int64) string {
 	return action.Text
 }
 
-func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, []memory.QA) {
+func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, string, []memory.QA) {
 	id := strconv.Itoa(int(chatID))
+
+	switch messageText {
+	case "Закончить диалог":
+		opponent := uc.messageRepo.GetChatOpponent(id)
+		return "Диалог закончен", opponent, nil
+	}
 
 	state, ok := uc.messageRepo.GetUserState(id)
 	if !ok {
@@ -37,10 +43,10 @@ func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, []me
 
 		qa := uc.messageRepo.FindKeyword(words)
 		if len(qa) != 0 {
-			return "По вашему запросу найдены похожие подсказки:", qa
+			return "По вашему запросу найдены похожие подсказки:", "", qa
 		}
 
-		return "По вашему запросу ничего не найдено, связаться со специалистом?", []memory.QA{
+		return "По вашему запросу ничего не найдено, связаться со специалистом?", "", []memory.QA{
 			{
 				Hash:     "hashForConfirm",
 				Question: "Да",
@@ -54,15 +60,23 @@ func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, []me
 	switch state.Name {
 	case "login":
 		return uc.ServiceLoginState(messageText, state.Step, id)
+	case "chat":
+		return uc.ServiceChatState(messageText, state.Step, id)
 	default:
-		return "", nil
+		return "", "", nil
 	}
 }
 
-func (uc *UseCase) HandleCallback(callbackData string, chatID int64) CallbackAnswer {
+func (uc *UseCase) HandleCallback(callbackData string, chatID int64, messageText string) CallbackAnswer {
 	switch callbackData {
 	case "hashForSeeKeyword":
 		return uc.HandleSeeKeyword()
+	case "hashForConfirm":
+		id := strconv.Itoa(int(chatID))
+		return uc.HandleConfirm(id, messageText)
+	case "hashForHelpUsers":
+		id := strconv.Itoa(int(chatID))
+		return uc.HandleHelpUsers(id)
 	default:
 		return CallbackAnswer{}
 	}

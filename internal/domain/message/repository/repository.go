@@ -66,3 +66,19 @@ func (r *MessageRepository) FindKeyword(words []string) []memory.QA {
 func (r *MessageRepository) GetKeywords() map[string]cache.Item {
 	return r.memClient.GetKeywords()
 }
+
+func (r *MessageRepository) AddUserToWaitChat(id string, messageText string) {
+	r.memClient.AddUserToWaitChat(id, messageText)
+}
+
+func (r *MessageRepository) GetUserFromWaitList() (string, string) {
+	return r.memClient.GetUserFromWaitList()
+}
+
+func (r *MessageRepository) SetupChat(userID string, id string) {
+	r.memClient.SetupChat(userID, id)
+}
+
+func (r *MessageRepository) GetChatOpponent(userID string) string {
+	return r.memClient.GetChatOpponent(userID)
+}

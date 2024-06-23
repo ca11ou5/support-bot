@@ -6,17 +6,17 @@ import (
 	"strings"
 )
 
-func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, []memory.QA) {
+func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, string, []memory.QA) {
 	switch step {
 	case 0:
 		credentials := strings.Split(text, " ")
 		if len(credentials) != 2 {
-			return "Формат введенного сообщения не подходит под формат данных авторизации", nil
+			return "Формат введенного сообщения не подходит под формат данных авторизации", "", nil
 		}
 
 		count, err := uc.messageRepo.GetSupportEmployee(credentials[0], credentials[1])
 		if err != nil {
-			return "Произошла внутренняя ошибка", nil
+			return "Произошла внутренняя ошибка", "", nil
 		}
 
 		var isExist bool
@@ -26,7 +26,7 @@ func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, 
 
 		if isExist {
 			uc.messageRepo.IncreaseStateStep(id)
-			return "Вы успешно авторизованы", []memory.QA{{
+			return "Вы успешно авторизованы", "", []memory.QA{{
 				Hash:     "hashForSeeKeyword",
 				Question: "Просмотреть ключевые фразы/теги",
 				// TODO
@@ -38,7 +38,7 @@ func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, 
 				}}
 		}
 
-		return "Неправильный логин или пароль", nil
+		return "Неправильный логин или пароль", "", nil
 	case 1:
 		uc.messageRepo.DeleteUserState(id)
 
@@ -46,5 +46,11 @@ func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, 
 		uc.HandleMessage(text, int64(chatID))
 	}
 
-	return "", nil
+	return "", "", nil
+}
+
+func (uc *UseCase) ServiceChatState(text string, step int, id string) (string, string, []memory.QA) {
+	opponent := uc.messageRepo.GetChatOpponent(id)
+
+	return text, opponent, nil
 }

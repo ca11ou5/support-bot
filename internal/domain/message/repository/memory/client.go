@@ -24,16 +24,20 @@ var commandPhrases = map[string]CommandAction{
 }
 
 type Client struct {
-	commandPhrases map[string]CommandAction
-	states         *cache.Cache
-	keywords       *cache.Cache
+	commandPhrases  map[string]CommandAction
+	states          *cache.Cache
+	keywords        *cache.Cache
+	waitingForChats map[string]string
+	chats           *cache.Cache
 }
 
 func NewClient() *Client {
 	return &Client{
-		commandPhrases: commandPhrases,
-		states:         cache.New(7*time.Hour*24, 10*time.Minute),
-		keywords:       cache.New(365*time.Hour*24, 10*time.Minute),
+		commandPhrases:  commandPhrases,
+		states:          cache.New(7*time.Hour*24, 10*time.Minute),
+		keywords:        cache.New(365*time.Hour*24, 10*time.Minute),
+		waitingForChats: make(map[string]string),
+		chats:           cache.New(365*time.Hour*24, 10*time.Minute),
 	}
 }
 
@@ -126,4 +130,46 @@ func (c *Client) SetKeyword(word string) {
 
 func (c *Client) GetKeywords() map[string]cache.Item {
 	return c.keywords.Items()
+}
+
+func (c *Client) AddUserToWaitChat(id string, messageText string) {
+	c.waitingForChats[id] = messageText
+}
+
+func (c *Client) GetUserFromWaitList() (string, string) {
+	for k, v := range c.waitingForChats {
+		delete(c.waitingForChats, k)
+		return k, v
+	}
+
+	return "", ""
+}
+
+type Chat struct {
+	UserID     string
+	EmployerID string
+}
+
+func (c *Client) SetupChat(userID string, id string) {
+	chat := Chat{
+		UserID:     userID,
+		EmployerID: id,
+	}
+
+	c.chats.Set(userID, chat, cache.DefaultExpiration)
+	c.chats.Set(id, chat, cache.DefaultExpiration)
+}
+
+func (c *Client) GetChatOpponent(id string) string {
+	chat, ok := c.chats.Get(id)
+	if !ok {
+		return ""
+	}
+
+	chatT := chat.(Chat)
+	if chatT.EmployerID != id {
+		return chatT.EmployerID
+	}
+
+	return chatT.UserID
 }
