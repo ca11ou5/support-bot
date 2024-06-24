@@ -39,8 +39,12 @@ func (s *Server) StartPolling(token string) error {
 		if update.Message != nil {
 			// Command handler
 			if update.Message.IsCommand() {
-				text := s.useCase.HandleCommand(update.Message.Command(), update.Message.Chat.ID)
-				s.SendMessage(update.Message.Chat.ID, text, false)
+				text, menu := s.useCase.HandleCommand(update.Message.Command(), update.Message.Chat.ID)
+				if menu != nil {
+					s.SendMessage(update.Message.Chat.ID, text, false, menu)
+					continue
+				}
+				s.SendMessage(update.Message.Chat.ID, text, false, nil)
 				continue
 			}
 
@@ -49,12 +53,12 @@ func (s *Server) StartPolling(token string) error {
 				ids, _ := strconv.Atoi(id)
 
 				if text == "Диалог закончен" {
-					s.SendMessage(int64(ids), text, true)
-					s.SendMessage(update.Message.Chat.ID, text, true)
+					s.SendMessage(int64(ids), text, true, nil)
+					s.SendMessage(update.Message.Chat.ID, text, true, nil)
 					continue
 				}
 
-				s.SendMessage(int64(ids), text, false)
+				s.SendMessage(int64(ids), text, false, nil)
 				continue
 			}
 
@@ -63,11 +67,17 @@ func (s *Server) StartPolling(token string) error {
 				continue
 			}
 
-			s.SendMessage(update.Message.Chat.ID, text, false)
+			s.SendMessage(update.Message.Chat.ID, text, false, nil)
 			continue
 
 		} else if update.CallbackQuery != nil {
-			ca := s.useCase.HandleCallback(update.CallbackQuery.Data, update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Message.ReplyToMessage.Text)
+			if update.CallbackQuery.Message.ReplyToMessage != nil {
+				ca := s.useCase.HandleCallback(update.CallbackQuery.Data, update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Message.ReplyToMessage.Text)
+				s.SendCA(ca, update.CallbackQuery.Message.Chat.ID)
+				continue
+			}
+
+			ca := s.useCase.HandleCallback(update.CallbackQuery.Data, update.CallbackQuery.Message.Chat.ID, "")
 			s.SendCA(ca, update.CallbackQuery.Message.Chat.ID)
 			continue
 		}
@@ -76,10 +86,19 @@ func (s *Server) StartPolling(token string) error {
 	return nil
 }
 
-func (s *Server) SendMessage(chatID int64, message string, needCloseKB bool) {
+func (s *Server) SendMessage(chatID int64, message string, needCloseKB bool, menu []memory.QA) {
 	msg := tgbotapi.NewMessage(chatID, message)
 	if needCloseKB {
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+	}
+
+	if menu != nil {
+		var keyboard tgbotapi.InlineKeyboardMarkup
+		for _, qa := range menu {
+			keyboard.InlineKeyboard = append(keyboard.InlineKeyboard, []tgbotapi.InlineKeyboardButton{tgbotapi.NewInlineKeyboardButtonData(qa.Question, qa.Hash)})
+		}
+		msg.ReplyMarkup = keyboard
+
 	}
 
 	_, err := s.bot.Send(msg)

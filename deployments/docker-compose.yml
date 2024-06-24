@@ -7,6 +7,10 @@ services:
       context: ../
       dockerfile: ./build/Dockerfile
 
+    volumes:
+      - ../images/:/images/
+      - ../web/:/web/
+
     ports:
       - "8080:8080"
 

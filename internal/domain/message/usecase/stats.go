@@ -7,3 +7,7 @@ import (
 func (uc *UseCase) SaveStats(stats entity.Stats) error {
 	return uc.messageRepo.SaveStats(stats)
 }
+
+func (uc *UseCase) InsertWords(words map[string]int) error {
+	return uc.messageRepo.InsertWords(words)
+}

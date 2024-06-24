@@ -18,11 +18,13 @@ func (uc *UseCase) HandleSeeKeyword() CallbackAnswer {
 	if len(keywords) == 0 {
 		return CallbackAnswer{
 			Text: "В данный момент не существует ни одного ключевого слова/фразы",
+			MessageKeyboard: tgbotapi.NewInlineKeyboardMarkup(tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("Добавить ключевое"+
+				" слово/фразу", "AddNewKeyword"))),
 		}
 	}
 
 	ca := CallbackAnswer{
-		Text:            "Список всех ключевых слов",
+		Text:            "Список всех ключевых слов и фраз",
 		MessageKeyboard: generateCallbackKeyboard(keywords),
 	}
 
@@ -65,5 +67,12 @@ func (uc *UseCase) HandleHelpUsers(id string) CallbackAnswer {
 			tgbotapi.NewKeyboardButtonRow(
 				tgbotapi.NewKeyboardButton("Закончить диалог"),
 			)),
+	}
+}
+
+func (uc *UseCase) HandleAddKeyword(id string) CallbackAnswer {
+	uc.messageRepo.ReplaceUserState(id, "adding")
+	return CallbackAnswer{
+		Text: "Введите ключевое слово/фразу\nДлина фразы не должна превышать 64 символа",
 	}
 }

@@ -59,8 +59,16 @@ func (r *MessageRepository) GetStats() []entity.Stats {
 	return r.mongoClient.GetStats()
 }
 
+func (r *MessageRepository) InsertWords(words map[string]int) error {
+	return r.mongoClient.InsertWords(words)
+}
+
 func (r *MessageRepository) FindKeyword(words []string) []memory.QA {
 	return r.memClient.FindKeyword(words)
+}
+
+func (r *MessageRepository) SetKeyword(word string) {
+	r.memClient.SetKeyword(word)
 }
 
 func (r *MessageRepository) GetKeywords() map[string]cache.Item {

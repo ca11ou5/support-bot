@@ -9,6 +9,7 @@ type CommandAction struct {
 	Text            string
 	NeedsSetupState bool
 	State           string
+	Menu            []QA
 }
 
 var commandPhrases = map[string]CommandAction{
@@ -20,6 +21,20 @@ var commandPhrases = map[string]CommandAction{
 		Text:            "Введите данные для авторизации в формате:\nTODO: прикрутить Mini Apps",
 		NeedsSetupState: true,
 		State:           "login",
+	},
+	"menu": {
+		Text:            "Навигационное меню",
+		NeedsSetupState: false,
+		Menu: []QA{{
+			Hash:     "hashForSeeKeyword",
+			Question: "Просмотреть ключевые фразы/теги",
+			// TODO
+			//Answer:   "",
+		},
+			{
+				Hash:     "hashForHelpUsers",
+				Question: "Старт диалога с пользователем",
+			}},
 	},
 }
 

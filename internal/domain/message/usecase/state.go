@@ -29,8 +29,6 @@ func (uc *UseCase) ServiceLoginState(text string, step int, id string) (string, 
 			return "Вы успешно авторизованы", "", []memory.QA{{
 				Hash:     "hashForSeeKeyword",
 				Question: "Просмотреть ключевые фразы/теги",
-				// TODO
-				//Answer:   "",
 			},
 				{
 					Hash:     "hashForHelpUsers",
@@ -53,4 +51,22 @@ func (uc *UseCase) ServiceChatState(text string, step int, id string) (string, s
 	opponent := uc.messageRepo.GetChatOpponent(id)
 
 	return text, opponent, nil
+}
+
+func (uc *UseCase) ServiceAddingState(text string, step int, id string) (string, string, []memory.QA) {
+	switch step {
+	case 0:
+		if len(text) > 64 {
+			return "Размер превышает положенный", "", nil
+		}
+
+		uc.messageRepo.IncreaseStateStep(id)
+		return "Введите слово еще раз для подтверждения", "", nil
+	case 1:
+		uc.messageRepo.SetKeyword(text)
+		uc.messageRepo.DeleteUserState(id)
+		return "Фраза успешно добавлена", "", nil
+	}
+
+	return "", "", nil
 }

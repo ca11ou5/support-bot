@@ -15,7 +15,7 @@ func NewMessageUseCase(messageRepo *repository.MessageRepository) *UseCase {
 	return &UseCase{messageRepo: messageRepo}
 }
 
-func (uc *UseCase) HandleCommand(command string, chatID int64) string {
+func (uc *UseCase) HandleCommand(command string, chatID int64) (string, []memory.QA) {
 	action := uc.messageRepo.GetCommandAction(command)
 	id := strconv.Itoa(int(chatID))
 
@@ -25,7 +25,11 @@ func (uc *UseCase) HandleCommand(command string, chatID int64) string {
 		uc.messageRepo.DeleteUserState(id)
 	}
 
-	return action.Text
+	if len(action.Menu) != 0 {
+		return action.Text, action.Menu
+	}
+
+	return action.Text, nil
 }
 
 func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, string, []memory.QA) {
@@ -62,6 +66,8 @@ func (uc *UseCase) HandleMessage(messageText string, chatID int64) (string, stri
 		return uc.ServiceLoginState(messageText, state.Step, id)
 	case "chat":
 		return uc.ServiceChatState(messageText, state.Step, id)
+	case "adding":
+		return uc.ServiceAddingState(messageText, state.Step, id)
 	default:
 		return "", "", nil
 	}
@@ -77,6 +83,9 @@ func (uc *UseCase) HandleCallback(callbackData string, chatID int64, messageText
 	case "hashForHelpUsers":
 		id := strconv.Itoa(int(chatID))
 		return uc.HandleHelpUsers(id)
+	case "AddNewKeyword":
+		id := strconv.Itoa(int(chatID))
+		return uc.HandleAddKeyword(id)
 	default:
 		return CallbackAnswer{}
 	}

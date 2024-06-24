@@ -13,7 +13,8 @@ type Stats struct {
 	AllCommandsCount  int `bson:"all_commands_count"`
 	AllCallbacksCount int `bson:"all_callbacks_count"`
 
-	LatestMessagesCount  int `bson:"latest_messages_count"`
-	LatestCommandsCount  int `bson:"latest_commands_count"`
-	LatestCallbacksCount int `bson:"latest_callbacks_count"`
+	LatestMessagesCount  int            `bson:"latest_messages_count"`
+	LatestCommandsCount  int            `bson:"latest_commands_count"`
+	LatestCallbacksCount int            `bson:"latest_callbacks_count"`
+	Words                map[string]int `bson:"-"`
 }

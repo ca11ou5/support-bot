@@ -21,6 +21,7 @@ func NewServer(useCase *usecase.UseCase) *Server {
 		useCase: useCase,
 		stats: entity.Stats{
 			Timestamp: time.Now(),
+			Words:     make(map[string]int),
 		},
 	}
 }
