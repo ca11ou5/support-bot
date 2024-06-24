@@ -1,20 +1,19 @@
 package http
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	chartrender "github.com/go-echarts/go-echarts/v2/render"
+	"log"
 
 	"html/template"
 	"io"
 	"net/http"
-	"os"
 )
 
 func (s *Server) RegisterHTTPServer() error {
-	http.HandleFunc("/", s.chart)
-	http.HandleFunc("/stats", s.statsHandler)
+	http.HandleFunc("/", s.statsHandler)
+	http.HandleFunc("/stats", s.index)
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
@@ -23,39 +22,29 @@ func (s *Server) RegisterHTTPServer() error {
 	return nil
 }
 
-func (s *Server) chart(w http.ResponseWriter, _ *http.Request) {
-	chart1, chart2, chart3 := s.useCase.GetCharts()
+func (s *Server) index(w http.ResponseWriter, _ *http.Request) {
+	chart1, chart2, chart3, chart4 := s.useCase.GetCharts()
 
-	f1, _ := os.Create("./images/chart1.txt")
-	defer f1.Close()
-	f2, _ := os.Create("./images/chart2.txt")
-	defer f2.Close()
-	f3, _ := os.Create("./images/chart3.txt")
-	defer f3.Close()
+	//f1, _ := os.Create("./images/chart1.txt")
+	//defer f1.Close()
+	//f2, _ := os.Create("./images/chart2.txt")
+	//defer f2.Close()
+	//f3, _ := os.Create("./images/chart3.txt")
+	//defer f3.Close()
 
 	// Сохранение графика как изображения
-	chart1.Renderer = newSnippetRenderer(chart1, chart1.Validate)
-	chart2.Renderer = newSnippetRenderer(chart2, chart3.Validate)
-	chart3.Renderer = newSnippetRenderer(chart3, chart3.Validate)
+	//chart1.Renderer = newSnippetRenderer(chart1, chart1.Validate)
+	//chart2.Renderer = newSnippetRenderer(chart2, chart3.Validate)
+	//chart3.Renderer = newSnippetRenderer(chart3, chart3.Validate)
+	//
+	//chart1.Render(f1)
+	//chart2.Render(f2)
+	//chart3.Render(f3)
 
-	chart1.Render(f1)
-	chart1.Render(f2)
-	chart1.Render(f3)
-
-	var buffer bytes.Buffer
-	file, _ := os.Open("./images/chart.txt")
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		buffer.WriteString(scanner.Text())
-		buffer.WriteString("\n") // Добавляем перевод строки, чтобы сохранить оригинальный формат файла
-	}
-	if err := scanner.Err(); err != nil {
-		panic(err)
-	}
-
-	fmt.Println(buffer.String())
+	var htmlSnippet1 = renderToHtml(chart1)
+	var htmlSnippet2 = renderToHtml(chart2)
+	var htmlSnippet3 = renderToHtml(chart3)
+	var htmlSnippet4 = renderToHtml(chart4)
 
 	templatePath := "./web/2.html"
 
@@ -65,41 +54,19 @@ func (s *Server) chart(w http.ResponseWriter, _ *http.Request) {
 		panic(err)
 	}
 
-	data := []string{buffer.String()}
+	data := []template.HTML{htmlSnippet1, htmlSnippet2, htmlSnippet3, htmlSnippet4}
 
-	err = tmpl.Execute(file, data)
+	err = tmpl.Execute(w, data)
 	if err != nil {
 		panic(err)
 	}
-
-	//page := components.NewPage()
-	//
-	//page.AddCharts(chart1, chart2, chart3)
-	//
-	//page.Render(w)
 }
 
 func (s *Server) statsHandler(w http.ResponseWriter, r *http.Request) {
-	// Определяем путь к файлу index.html
-	htmlFilePath := "./web/2.html"
+	filePath := "./web/1.html"
 
-	// Открываем файл
-	file, err := os.Open(htmlFilePath)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Не удалось открыть файл HTML: %s", err), http.StatusInternalServerError)
-		return
-	}
-	defer file.Close()
-
-	// Устанавливаем правильный Content-Type
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	// Копируем содержимое файла в ответ
-	_, err = io.Copy(w, file)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Не удалось прочитать файл HTML: %s", err), http.StatusInternalServerError)
-		return
-	}
+	// Загрузка файла и отправка его клиенту
+	http.ServeFile(w, r, filePath)
 }
 
 var baseTpl = `
@@ -147,4 +114,16 @@ func (r *snippetRenderer) Render(w io.Writer) error {
 
 	err := tpl.ExecuteTemplate(w, tplName, r.c)
 	return err
+}
+
+func renderToHtml(c interface{}) template.HTML {
+	var buf bytes.Buffer
+	r := c.(chartrender.Renderer)
+	err := r.Render(&buf)
+	if err != nil {
+		log.Printf("Failed to render chart: %s", err)
+		return ""
+	}
+
+	return template.HTML(buf.String())
 }

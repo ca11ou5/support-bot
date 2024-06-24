@@ -28,8 +28,6 @@ var commandPhrases = map[string]CommandAction{
 		Menu: []QA{{
 			Hash:     "hashForSeeKeyword",
 			Question: "Просмотреть ключевые фразы/теги",
-			// TODO
-			//Answer:   "",
 		},
 			{
 				Hash:     "hashForHelpUsers",
@@ -107,8 +105,9 @@ func (c *Client) IncreaseStateStep(userID string) {
 }
 
 type Keyword struct {
-	Word string
-	QA   []QA
+	Word  string
+	QA    []QA
+	Count int
 }
 
 type QA struct {
@@ -124,6 +123,9 @@ func (c *Client) FindKeyword(words []string) []QA {
 		v, ok := c.keywords.Get(word)
 		if ok {
 			keyword := v.(Keyword)
+			keyword.Count++
+
+			c.keywords.Set(word, keyword, cache.DefaultExpiration)
 			for _, val := range keyword.QA {
 				qa = append(qa, val)
 			}
@@ -133,7 +135,15 @@ func (c *Client) FindKeyword(words []string) []QA {
 	return qa
 }
 
-// TODO
+func (c *Client) FindInKeywords(word string) string {
+	_, ok := c.keywords.Get(word)
+	if ok {
+		return word
+	}
+
+	return ""
+}
+
 func (c *Client) SetKeyword(word string) {
 	kw := Keyword{
 		Word: word,

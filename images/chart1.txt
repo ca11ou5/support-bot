@@ -1,11 +1,11 @@
 
 <div class="container">
-    <div class="item" id="pTbMsGybdnkO" style="width:400px;height:200px;"></div>
+    <div class="item" id="HPeNBokRcLHY" style="width:200px;height:100px;"></div>
 </div>
    <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
 <script type="text/javascript">
     "use strict";
-    let goecharts_pTbMsGybdnkO = echarts.init(document.getElementById('pTbMsGybdnkO'), "white");
-    let option_pTbMsGybdnkO = {"animation":true,"color":["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"],"legend":{"show":true,"type":""},"series":[{"name":"ЛиНиЯ","type":"line","smooth":false,"connectNulls":false,"showSymbol":false,"waveAnimation":false,"renderLabelForZeroData":false,"selectedMode":false,"animation":true,"data":[{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0}]}],"title":{},"tooltip":{"show":false},"xAxis":[{"data":["01:42","01:42","01:41","01:41","01:40","01:40","01:39","01:39","01:38","01:38"]}],"yAxis":[{}]};
-    goecharts_pTbMsGybdnkO.setOption(option_pTbMsGybdnkO);
+    let goecharts_HPeNBokRcLHY = echarts.init(document.getElementById('HPeNBokRcLHY'), "white");
+    let option_HPeNBokRcLHY = {"animation":true,"color":["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"],"legend":{"show":true,"type":""},"series":[{"name":"ЛиНиЯ","type":"line","smooth":false,"connectNulls":false,"showSymbol":false,"waveAnimation":false,"renderLabelForZeroData":false,"selectedMode":false,"animation":true,"data":[{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0}]}],"title":{},"tooltip":{"show":false},"xAxis":[{"data":["03:42","03:42","03:41","03:41","03:40","03:40","03:39","03:39","03:38","03:38"]}],"yAxis":[{}]};
+    goecharts_HPeNBokRcLHY.setOption(option_HPeNBokRcLHY);
 </script>

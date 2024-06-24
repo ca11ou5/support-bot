@@ -90,3 +90,11 @@ func (r *MessageRepository) SetupChat(userID string, id string) {
 func (r *MessageRepository) GetChatOpponent(userID string) string {
 	return r.memClient.GetChatOpponent(userID)
 }
+
+func (r *MessageRepository) GetWords() map[string]interface{} {
+	return r.mongoClient.GetWords()
+}
+
+func (r *MessageRepository) FindInKeywords(word string) string {
+	return r.memClient.FindInKeywords(word)
+}

@@ -87,6 +87,12 @@ func (uc *UseCase) HandleCallback(callbackData string, chatID int64, messageText
 		id := strconv.Itoa(int(chatID))
 		return uc.HandleAddKeyword(id)
 	default:
+		id := strconv.Itoa(int(chatID))
+		wrd := uc.messageRepo.FindInKeywords(callbackData)
+		if wrd != "" {
+			return uc.HandleAddQA(id, wrd)
+		}
+
 		return CallbackAnswer{}
 	}
 }

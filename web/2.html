@@ -82,16 +82,9 @@
     <header>
         <h1>Статистика</h1>
     </header>
-    <div class="grid-container">
-        <div class="grid-item" id="chart1">График 1</div>
-        <div class="grid-item" id="chart2">График 2</div>
-        <div class="grid-item" id="chart3">График 3</div>
-        <div class="grid-item" id="chart4">График 4</div>
-        <div class="grid-item" id="chart5">График 5</div>
-        <div class="grid-item" id="chart6">График 6</div>
-        <div class="grid-item" id="chart7">График 7</div>
-        <div class="grid-item" id="chart8">График 8</div>
-    </div>
+        {{range .}}
+        {{.}}
+        {{end}}
     <footer>
         &copy; 2024 Ваше Название Компании
     </footer>

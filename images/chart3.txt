@@ -1,11 +1,13 @@
 
 <div class="container">
-    <div class="item" id="pTbMsGybdnkO" style="width:400px;height:200px;"></div>
+    <div class="item" id="TBmMLOxYHBia" style="width:550px;height:275px;"></div>
 </div>
    <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
+   <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts@4.min.js"></script>
+   <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts-wordcloud.min.js"></script>
 <script type="text/javascript">
     "use strict";
-    let goecharts_pTbMsGybdnkO = echarts.init(document.getElementById('pTbMsGybdnkO'), "white");
-    let option_pTbMsGybdnkO = {"animation":true,"color":["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"],"legend":{"show":true,"type":""},"series":[{"name":"ЛиНиЯ","type":"line","smooth":false,"connectNulls":false,"showSymbol":false,"waveAnimation":false,"renderLabelForZeroData":false,"selectedMode":false,"animation":true,"data":[{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0}]}],"title":{},"tooltip":{"show":false},"xAxis":[{"data":["01:42","01:42","01:41","01:41","01:40","01:40","01:39","01:39","01:38","01:38"]}],"yAxis":[{}]};
-    goecharts_pTbMsGybdnkO.setOption(option_pTbMsGybdnkO);
+    let goecharts_TBmMLOxYHBia = echarts.init(document.getElementById('TBmMLOxYHBia'), "white");
+    let option_TBmMLOxYHBia = {"animation":true,"color":["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"],"legend":{"show":true,"type":""},"series":[{"name":"Самые популярные слова","type":"wordCloud","smooth":false,"connectNulls":false,"showSymbol":false,"waveAnimation":false,"sizeRange":[14,80],"renderLabelForZeroData":false,"selectedMode":false,"animation":false,"data":[{"name":"NCAA baseball tournament","value":273},{"name":"Home","value":1112},{"name":"Farrah Abraham","value":462},{"name":"Rita Ora","value":366},{"name":"Serena Williams","value":282},{"name":"Chick Fil A","value":2244},{"name":"Pitch Perfect","value":1484},{"name":"Lewis Hamilton","value":582},{"name":"Mary Ellen Mark","value":550},{"name":"Point Break","value":265},{"name":"Amy Schumer","value":4386},{"name":"Jurassic World","value":4055},{"name":"Charter Communications","value":2467},{"name":"Express","value":1689},{"name":"Lena Dunham","value":847},{"name":"KXAN","value":555},{"name":"Sam S Club","value":10000},{"name":"Macys","value":6181},{"name":"Planet Fitness","value":1898},{"name":"Johnny Depp","value":985}],"textStyle":{"normal":{"color":"__f__function () {return 'rgb(' + [Math.round(Math.random() * 160),Math.round(Math.random() * 160),Math.round(Math.random() * 160)].join(',') + ')';}__f__"}}}],"title":{},"tooltip":{"show":false}};
+    goecharts_TBmMLOxYHBia.setOption(option_TBmMLOxYHBia);
 </script>

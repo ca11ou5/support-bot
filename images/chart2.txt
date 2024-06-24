@@ -1,11 +1,11 @@
 
 <div class="container">
-    <div class="item" id="pTbMsGybdnkO" style="width:400px;height:200px;"></div>
+    <div class="item" id="NPAmFJjJDRpV" style="width:550px;height:275px;"></div>
 </div>
-   <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
+   <script src="echarts.min.js"></script>
 <script type="text/javascript">
     "use strict";
-    let goecharts_pTbMsGybdnkO = echarts.init(document.getElementById('pTbMsGybdnkO'), "white");
-    let option_pTbMsGybdnkO = {"animation":true,"color":["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"],"legend":{"show":true,"type":""},"series":[{"name":"ЛиНиЯ","type":"line","smooth":false,"connectNulls":false,"showSymbol":false,"waveAnimation":false,"renderLabelForZeroData":false,"selectedMode":false,"animation":true,"data":[{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0}]}],"title":{},"tooltip":{"show":false},"xAxis":[{"data":["01:42","01:42","01:41","01:41","01:40","01:40","01:39","01:39","01:38","01:38"]}],"yAxis":[{}]};
-    goecharts_pTbMsGybdnkO.setOption(option_pTbMsGybdnkO);
+    let goecharts_NPAmFJjJDRpV = echarts.init(document.getElementById('NPAmFJjJDRpV'), "white");
+    let option_NPAmFJjJDRpV = {"animation":true,"color":["#5470c6","#91cc75","#fac858","#ee6666","#73c0de","#3ba272","#fc8452","#9a60b4","#ea7ccc"],"legend":{"show":true,"type":""},"series":[{"name":"fgds","type":"line","smooth":false,"connectNulls":false,"showSymbol":false,"waveAnimation":false,"renderLabelForZeroData":false,"selectedMode":false,"animation":true,"data":[{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0},{"value":0,"XAxisIndex":0,"YAxisIndex":0}]}],"title":{},"tooltip":{"show":false},"xAxis":[{}],"yAxis":[{}]};
+    goecharts_NPAmFJjJDRpV.setOption(option_NPAmFJjJDRpV);
 </script>

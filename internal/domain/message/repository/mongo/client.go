@@ -114,3 +114,9 @@ func (c *Client) InsertWords(words map[string]int) error {
 
 	return nil
 }
+
+func (c *Client) GetWords() map[string]interface{} {
+	var result map[string]interface{}
+	_ = c.wordsColl.FindOne(context.Background(), bson.D{}).Decode(&result)
+	return result
+}

@@ -76,3 +76,14 @@ func (uc *UseCase) HandleAddKeyword(id string) CallbackAnswer {
 		Text: "Введите ключевое слово/фразу\nДлина фразы не должна превышать 64 символа",
 	}
 }
+
+func (uc *UseCase) HandleAddQA(id string, word string) CallbackAnswer {
+	uc.messageRepo.ReplaceUserState(id, "addingQA")
+	return CallbackAnswer{
+		Text:              "",
+		MessageKeyboard:   tgbotapi.InlineKeyboardMarkup{},
+		OpponentID:        "",
+		MessageToOpponent: "",
+		KB:                tgbotapi.ReplyKeyboardMarkup{},
+	}
+}

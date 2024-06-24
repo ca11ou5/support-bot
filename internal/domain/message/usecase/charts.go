@@ -6,29 +6,6 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
-var wcData = map[string]interface{}{
-	"Sam S Club":               10000,
-	"Macys":                    6181,
-	"Amy Schumer":              4386,
-	"Jurassic World":           4055,
-	"Charter Communications":   2467,
-	"Chick Fil A":              2244,
-	"Planet Fitness":           1898,
-	"Pitch Perfect":            1484,
-	"Express":                  1689,
-	"Home":                     1112,
-	"Johnny Depp":              985,
-	"Lena Dunham":              847,
-	"Lewis Hamilton":           582,
-	"KXAN":                     555,
-	"Mary Ellen Mark":          550,
-	"Farrah Abraham":           462,
-	"Rita Ora":                 366,
-	"Serena Williams":          282,
-	"NCAA baseball tournament": 273,
-	"Point Break":              265,
-}
-
 func generateWCData(data map[string]interface{}) (items []opts.WordCloudData) {
 	items = make([]opts.WordCloudData, 0)
 	for k, v := range data {
@@ -37,19 +14,21 @@ func generateWCData(data map[string]interface{}) (items []opts.WordCloudData) {
 	return
 }
 
-func (uc *UseCase) GetCharts() (*charts.Line, *charts.Line, *charts.WordCloud) {
+func (uc *UseCase) GetCharts() (*charts.Line, *charts.Line, *charts.WordCloud, *charts.Pie) {
 	stats := uc.messageRepo.GetStats()
 
 	latestMessages := charts.NewLine()
 	allMessages := charts.NewLine()
 
 	wc := charts.NewWordCloud()
-	wc.SetGlobalOptions(
-		charts.WithTitleOpts(opts.Title{
-			Title: "basic WordCloud example",
-		}))
+	circle := charts.NewPie()
+	circle.AddSeries("Национальность обращающихся пользователей", []opts.PieData{{
+		Name:  "RU",
+		Value: 100,
+	}})
 
-	wc.AddSeries("wordcloud", generateWCData(wcData)).
+	words := uc.messageRepo.GetWords()
+	wc.AddSeries("Самые популярные слова", generateWCData(words)).
 		SetSeriesOptions(
 			charts.WithWorldCloudChartOpts(
 				opts.WordCloudChart{
@@ -78,15 +57,30 @@ func (uc *UseCase) GetCharts() (*charts.Line, *charts.Line, *charts.WordCloud) {
 		})
 	}
 
-	allMessages.SetXAxis(xAllMsg).AddSeries("ЛиНиЯ", yAllMsg).SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: false}))
-	latestMessages.SetXAxis(xLatMsg).AddSeries("fgds", yLatMsg)
+	allMessages.SetXAxis(xAllMsg).AddSeries("Общее количество входящих запросов", yAllMsg).SetSeriesOptions(charts.WithLineChartOpts(opts.LineChart{Smooth: false}))
+	latestMessages.SetXAxis(xLatMsg).AddSeries("Количество последних входящих запросов", yLatMsg)
 
 	allMessages.SetGlobalOptions(
 		charts.WithInitializationOpts(opts.Initialization{
-			Width:  fmt.Sprintf("%dpx", 400),
-			Height: fmt.Sprintf("%dpx", 200),
+			Width:  fmt.Sprintf("%dpx", 550),
+			Height: fmt.Sprintf("%dpx", 275),
 		}),
 	)
+	latestMessages.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{
+			Width:  fmt.Sprintf("%dpx", 550),
+			Height: fmt.Sprintf("%dpx", 275),
+		}))
+	wc.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{
+			Width:  fmt.Sprintf("%dpx", 550),
+			Height: fmt.Sprintf("%dpx", 275),
+		}))
+	circle.SetGlobalOptions(
+		charts.WithInitializationOpts(opts.Initialization{
+			Width:  fmt.Sprintf("%dpx", 550),
+			Height: fmt.Sprintf("%dpx", 275),
+		}))
 
-	return allMessages, latestMessages, wc
+	return allMessages, latestMessages, wc, circle
 }
